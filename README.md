@@ -6,7 +6,7 @@ Cargo service, training project with Spring Boot, JDBC and Kotlin.
 * Kotlin
 * Spring Boot
 * JDBC
-*PostgreSQL
+* PostgreSQL
 
 ### Endpoints
 * http://localhost:8080/cargo - get all cargo
