@@ -18,13 +18,24 @@ class CargoServiceImpl(
         ?.toDto()
         ?: throw CargoNotFoundException("Cargo with id=$id not found")
 
-    override fun create(cargoDto: CargoDto): CargoDto {
-        TODO("Not yet implemented")
-    }
+    override fun create(cargoDto: CargoDto): CargoDto =
+        cargoRepository.create(
+            Cargo(
+                title = cargoDto.title,
+                passengerCount = cargoDto.passengerCount,
+            )
+        )
+            .toDto()
 
-    override fun update(id: Int, cargoDto: CargoDto): CargoDto {
-        TODO("Not yet implemented")
-    }
+    override fun update(id: Int, cargoDto: CargoDto): CargoDto =
+        cargoRepository.update(
+            id,
+            Cargo(
+                title = cargoDto.title,
+                passengerCount = cargoDto.passengerCount,
+            )
+        )
+            .toDto()
 
     override fun delete(id: Int) {
         TODO("Not yet implemented")
