@@ -38,7 +38,7 @@ class CargoServiceImpl(
             .toDto()
 
     override fun delete(id: Int) {
-        TODO("Not yet implemented")
+        cargoRepository.delete(id)
     }
 
     private fun Cargo.toDto() =

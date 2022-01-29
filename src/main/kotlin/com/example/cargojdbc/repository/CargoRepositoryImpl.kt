@@ -67,7 +67,12 @@ class CargoRepositoryImpl(
     }
 
     override fun delete(id: Int) {
-        TODO("Not yet implemented")
+        jdbcTemplate.update(
+            "delete from cargo where id = :id",
+            mapOf(
+                "id" to id,
+            )
+        )
     }
 
     private companion object {
