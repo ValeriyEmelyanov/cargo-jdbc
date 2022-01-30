@@ -16,7 +16,7 @@ class CargoServiceImpl(
 
     override fun getById(id: Int): CargoDto = cargoRepository.findById(id)
         ?.toDto()
-        ?: throw CargoNotFoundException("Cargo with id=$id not found")
+        ?: throw CargoNotFoundException(id)
 
     override fun create(cargoDto: CargoDto): CargoDto =
         cargoRepository.create(
