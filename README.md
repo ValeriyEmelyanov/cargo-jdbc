@@ -22,9 +22,11 @@ create table cargo
 * Spring Boot
 * JDBC
 * PostgreSQL
+* Swagger
 
 ### Endpoints
+* http://localhost:8080/swagger-ui/ - documentation and ui
 * http://localhost:8080/cargo - get all cargo
 * http://localhost:8080/cargo/1 - get the cargo with id = 1
 * and so no
-* 
+ 

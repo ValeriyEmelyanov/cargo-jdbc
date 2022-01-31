@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class CargoJdbcApplication
 
 fun main(args: Array<String>) {
-	runApplication<CargoJdbcApplication>(*args)
+    runApplication<CargoJdbcApplication>(*args)
 }

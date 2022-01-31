@@ -4,4 +4,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/cargo_db
     username: postgres
     password: postgres
-
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
