@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: "001"
+      author: Emelyanov Valeriy
+      changes:
+        - createTable:
+            tableName: cargo
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: passenger_count
+                  type: int

@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: "002"
+      author: Emelyanov Valeriy
+      changes:
+        - addColumn:
+            tableName: cargo
+            columns:
+              - column:
+                  name: load_capacity
+                  type: int

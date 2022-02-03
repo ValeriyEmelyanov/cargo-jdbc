@@ -28,42 +28,38 @@ class CargoRepositoryImpl(
     override fun create(cargo: Cargo): Cargo {
         val keyHolder = GeneratedKeyHolder()
         jdbcTemplate.update(
-            "insert into cargo (title, passenger_count) values (:title, :passenger_count)",
+            "insert into cargo (title, passenger_count, load_capacity) " +
+                    "values (:title, :passenger_count, :load_capacity)",
             MapSqlParameterSource(
                 mapOf(
                     "title" to cargo.title,
                     "passenger_count" to cargo.passengerCount,
+                    "load_capacity" to cargo.loadCapacity,
                 )
             ),
             keyHolder,
-            listOf("id", "title", "passenger_count").toTypedArray()
+            listOf("id", "title", "passenger_count", "load_capacity").toTypedArray()
         )
-        return Cargo(
-            id = keyHolder.keys?.getValue("id") as Int,
-            title = keyHolder.keys?.getValue("title") as String,
-            passengerCount = keyHolder.keys?.getValue("passenger_count") as Int,
-        )
+        return keyHolder.toCargo()
     }
 
     override fun update(id: Int, cargo: Cargo): Cargo {
         val keyHolder = GeneratedKeyHolder()
         jdbcTemplate.update(
-            "update cargo set title = :title, passenger_count = :passenger_count where id = :id",
+            "update cargo set title = :title, passenger_count = :passenger_count, load_capacity = :load_capacity " +
+                    "where id = :id",
             MapSqlParameterSource(
                 mapOf(
                     "id" to id,
                     "title" to cargo.title,
                     "passenger_count" to cargo.passengerCount,
+                    "load_capacity" to cargo.loadCapacity,
                 )
             ),
             keyHolder,
-            listOf("id", "title", "passenger_count").toTypedArray()
+            listOf("id", "title", "passenger_count", "load_capacity").toTypedArray()
         )
-        return Cargo(
-            id = keyHolder.keys?.getValue("id") as Int,
-            title = keyHolder.keys?.getValue("title") as String,
-            passengerCount = keyHolder.keys?.getValue("passenger_count") as Int,
-        )
+        return keyHolder.toCargo()
     }
 
     override fun delete(id: Int) {
@@ -81,7 +77,16 @@ class CargoRepositoryImpl(
                 id = rs.getInt("id"),
                 title = rs.getString("title"),
                 passengerCount = rs.getIntOrNull("passenger_count"),
+                loadCapacity = rs.getIntOrNull("load_capacity"),
             )
         }
     }
+
+    private fun GeneratedKeyHolder.toCargo() =
+        Cargo(
+            id = keys?.getValue("id") as Int,
+            title = keys?.getValue("title") as String,
+            passengerCount = keys?.getValue("passenger_count") as Int?,
+            loadCapacity = keys?.getValue("load_capacity") as Int?,
+        )
 }

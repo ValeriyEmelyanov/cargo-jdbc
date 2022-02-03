@@ -19,22 +19,11 @@ class CargoServiceImpl(
         ?: throw CargoNotFoundException(id)
 
     override fun create(cargoDto: CargoDto): CargoDto =
-        cargoRepository.create(
-            Cargo(
-                title = cargoDto.title,
-                passengerCount = cargoDto.passengerCount,
-            )
-        )
+        cargoRepository.create(cargoDto.toModel())
             .toDto()
 
     override fun update(id: Int, cargoDto: CargoDto): CargoDto =
-        cargoRepository.update(
-            id,
-            Cargo(
-                title = cargoDto.title,
-                passengerCount = cargoDto.passengerCount,
-            )
-        )
+        cargoRepository.update(id, cargoDto.toModel())
             .toDto()
 
     override fun delete(id: Int) {
@@ -46,5 +35,14 @@ class CargoServiceImpl(
             id = id,
             title = title,
             passengerCount = passengerCount,
+            loadCapacity = loadCapacity,
+        )
+
+    private fun CargoDto.toModel() =
+        Cargo(
+            id = id,
+            title = title,
+            passengerCount = passengerCount,
+            loadCapacity = loadCapacity,
         )
 }
