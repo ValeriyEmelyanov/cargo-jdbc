@@ -22,6 +22,10 @@ class CargoServiceImpl(
         cargoRepository.create(cargoDto.toModel())
             .toDto()
 
+    override fun batchCreate(cargoDtos: List<CargoDto>): Int =
+        cargoRepository.batchCreate(cargoDtos.map { dto -> dto.toModel() })
+            .size
+
     override fun update(id: Int, cargoDto: CargoDto): CargoDto =
         cargoRepository.update(id, cargoDto.toModel())
             .toDto()

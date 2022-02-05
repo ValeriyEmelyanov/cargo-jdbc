@@ -10,6 +10,8 @@ interface CargoRepository {
 
     fun create(cargo: Cargo): Cargo
 
+    fun batchCreate(cargos: List<Cargo>): IntArray
+
     fun update(id: Int, cargo: Cargo): Cargo
 
     fun delete(id: Int)

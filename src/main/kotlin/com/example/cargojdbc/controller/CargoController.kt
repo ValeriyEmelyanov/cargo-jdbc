@@ -29,8 +29,12 @@ class CargoController(
     fun getById(@PathVariable id: Int): CargoDto = cargoService.getById(id)
 
     @PostMapping
-    @ApiOperation("СОздание новго транспортного средства")
+    @ApiOperation("Создание нового транспортного средства")
     fun create(@RequestBody cargoDto: CargoDto) = cargoService.create(cargoDto)
+
+    @PostMapping("/batch")
+    @ApiOperation("Пакетное создание новых транспортных средств")
+    fun batchCreate(@RequestBody cargoDtos: List<CargoDto>) = cargoService.batchCreate(cargoDtos)
 
     @PutMapping("/{id}")
     @ApiOperation("Обновление существующего транспортного средства")

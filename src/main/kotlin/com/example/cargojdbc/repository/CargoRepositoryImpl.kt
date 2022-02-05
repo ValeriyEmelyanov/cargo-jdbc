@@ -31,14 +31,23 @@ class CargoRepositoryImpl(
         jdbcTemplate.update(
             "insert into cargo (title, passenger_count, load_capacity) " +
                     "values (:title, :passenger_count, :load_capacity)",
-            MapSqlParameterSource()
-                .addValue("title", cargo.title, Types.VARCHAR)
-                .addValue("passenger_count", cargo.passengerCount, Types.INTEGER)
-                .addValue("load_capacity", cargo.loadCapacity, Types.INTEGER),
+            cargo.toCreateMapSqlParameterSource(),
             keyHolder,
             listOf("id", "title", "passenger_count", "load_capacity").toTypedArray()
         )
         return keyHolder.toCargo()
+    }
+
+    override fun batchCreate(cargos: List<Cargo>): IntArray {
+        val batchValues = cargos.map { cargo ->
+            cargo.toCreateMapSqlParameterSource()
+        }.toTypedArray()
+        val done = jdbcTemplate.batchUpdate(
+            "insert into cargo (title, passenger_count, load_capacity) " +
+                    "values (:title, :passenger_count, :load_capacity)",
+            batchValues
+        )
+        return done
     }
 
     override fun update(id: Int, cargo: Cargo): Cargo {
@@ -46,11 +55,7 @@ class CargoRepositoryImpl(
         jdbcTemplate.update(
             "update cargo set title = :title, passenger_count = :passenger_count, load_capacity = :load_capacity " +
                     "where id = :id",
-            MapSqlParameterSource()
-                .addValue("id", id, Types.INTEGER)
-                .addValue("title", cargo.title, Types.VARCHAR)
-                .addValue("passenger_count", cargo.passengerCount, Types.INTEGER)
-                .addValue("load_capacity", cargo.loadCapacity, Types.INTEGER),
+            cargo.toUpdateMapSqlParameterSource(id),
             keyHolder,
             listOf("id", "title", "passenger_count", "load_capacity").toTypedArray()
         )
@@ -84,4 +89,14 @@ class CargoRepositoryImpl(
             passengerCount = keys?.getValue("passenger_count") as Int?,
             loadCapacity = keys?.getValue("load_capacity") as Int?,
         )
+
+    private fun Cargo.toCreateMapSqlParameterSource() =
+        MapSqlParameterSource()
+            .addValue("title", title, Types.VARCHAR)
+            .addValue("passenger_count", passengerCount, Types.INTEGER)
+            .addValue("load_capacity", loadCapacity, Types.INTEGER)
+
+    private fun Cargo.toUpdateMapSqlParameterSource(_id: Int) =
+        toCreateMapSqlParameterSource()
+            .addValue("id", _id, Types.INTEGER)
 }
