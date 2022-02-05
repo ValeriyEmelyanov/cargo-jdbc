@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.stereotype.Repository
+import java.sql.Types
 
 @Repository
 class CargoRepositoryImpl(
@@ -30,13 +31,10 @@ class CargoRepositoryImpl(
         jdbcTemplate.update(
             "insert into cargo (title, passenger_count, load_capacity) " +
                     "values (:title, :passenger_count, :load_capacity)",
-            MapSqlParameterSource(
-                mapOf(
-                    "title" to cargo.title,
-                    "passenger_count" to cargo.passengerCount,
-                    "load_capacity" to cargo.loadCapacity,
-                )
-            ),
+            MapSqlParameterSource()
+                .addValue("title", cargo.title, Types.VARCHAR)
+                .addValue("passenger_count", cargo.passengerCount, Types.INTEGER)
+                .addValue("load_capacity", cargo.loadCapacity, Types.INTEGER),
             keyHolder,
             listOf("id", "title", "passenger_count", "load_capacity").toTypedArray()
         )
@@ -48,14 +46,11 @@ class CargoRepositoryImpl(
         jdbcTemplate.update(
             "update cargo set title = :title, passenger_count = :passenger_count, load_capacity = :load_capacity " +
                     "where id = :id",
-            MapSqlParameterSource(
-                mapOf(
-                    "id" to id,
-                    "title" to cargo.title,
-                    "passenger_count" to cargo.passengerCount,
-                    "load_capacity" to cargo.loadCapacity,
-                )
-            ),
+            MapSqlParameterSource()
+                .addValue("id", id, Types.INTEGER)
+                .addValue("title", cargo.title, Types.VARCHAR)
+                .addValue("passenger_count", cargo.passengerCount, Types.INTEGER)
+                .addValue("load_capacity", cargo.loadCapacity, Types.INTEGER),
             keyHolder,
             listOf("id", "title", "passenger_count", "load_capacity").toTypedArray()
         )

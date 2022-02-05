@@ -12,6 +12,7 @@ and the cargo_db database created
 * JDBC
 * PostgreSQL
 * Swagger
+* Liquibase
 
 ### Endpoints
 * http://localhost:8080/swagger-ui/ - documentation and ui

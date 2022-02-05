@@ -8,7 +8,7 @@ interface CargoRepository {
 
     fun findById(id: Int): Cargo?
 
-    fun create(cargoDto: Cargo): Cargo
+    fun create(cargo: Cargo): Cargo
 
     fun update(id: Int, cargo: Cargo): Cargo
 
