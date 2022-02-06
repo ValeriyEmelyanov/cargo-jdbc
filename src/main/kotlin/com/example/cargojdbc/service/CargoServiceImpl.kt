@@ -11,12 +11,14 @@ class CargoServiceImpl(
     private val cargoRepository: CargoRepository,
 ) : CargoService {
 
-    override fun getAll(): List<CargoDto> = cargoRepository.getAll()
-        .map { it.toDto() }
+    override fun getAll(pageIndex: Int): List<CargoDto> =
+        cargoRepository.getAll(pageIndex)
+            .map { it.toDto() }
 
-    override fun getById(id: Int): CargoDto = cargoRepository.findById(id)
-        ?.toDto()
-        ?: throw CargoNotFoundException(id)
+    override fun getById(id: Int): CargoDto =
+        cargoRepository.findById(id)
+            ?.toDto()
+            ?: throw CargoNotFoundException(id)
 
     override fun create(cargoDto: CargoDto): CargoDto =
         cargoRepository.create(cargoDto.toModel())
