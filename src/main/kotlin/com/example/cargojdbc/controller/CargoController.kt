@@ -47,4 +47,8 @@ class CargoController(
     fun delete(@PathVariable id: Int) {
         cargoService.delete(id)
     }
+
+    @GetMapping("/statistics")
+    @ApiOperation("Статистика: количество автомобилей каждого бренда")
+    fun getStatistics() = cargoService.getStatistics()
 }

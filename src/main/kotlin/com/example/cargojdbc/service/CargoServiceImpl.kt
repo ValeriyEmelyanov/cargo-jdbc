@@ -36,6 +36,9 @@ class CargoServiceImpl(
         cargoRepository.delete(id)
     }
 
+    override fun getStatistics(): Map<String, Int> =
+        cargoRepository.getStatistics()
+
     private fun Cargo.toDto() =
         CargoDto(
             id = id,

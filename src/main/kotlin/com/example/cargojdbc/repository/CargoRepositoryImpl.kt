@@ -2,6 +2,7 @@ package com.example.cargojdbc.repository
 
 import com.example.cargojdbc.model.Cargo
 import com.example.cargojdbc.util.getIntOrNull
+import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -107,8 +108,20 @@ class CargoRepositoryImpl(
         )
     }
 
+    override fun getStatistics(): Map<String, Int> =
+        jdbcTemplate.query(
+            """select
+               cb.title,
+               count(c.id) as count 
+               from cargo c
+               join car_brand cb on c.brand_id = cb.id
+               group by cb.title""",
+            EXTRACTOR
+        )!!
+
     private companion object {
         const val PAGE_SIZE = 5
+
         val ROW_MAPPER = RowMapper<Cargo> { rs, _ ->
             Cargo(
                 id = rs.getInt("id"),
@@ -117,6 +130,16 @@ class CargoRepositoryImpl(
                 passengerCount = rs.getIntOrNull("passenger_count"),
                 loadCapacity = rs.getIntOrNull("load_capacity"),
             )
+        }
+
+        val EXTRACTOR = ResultSetExtractor<Map<String, Int>> { rs ->
+            val result = mutableMapOf<String, Int>()
+            while (rs.next()) {
+                val title = rs.getString("title")
+                result.getOrPut(title) { 0 }
+                result[title] = result.getValue(title) + rs.getInt("count")
+            }
+            result
         }
     }
 

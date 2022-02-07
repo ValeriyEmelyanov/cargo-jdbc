@@ -16,4 +16,5 @@ interface CargoRepository {
 
     fun delete(id: Int)
 
+    fun getStatistics(): Map<String, Int>
 }
