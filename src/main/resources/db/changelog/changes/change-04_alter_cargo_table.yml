@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: "005"
+      author: Valeriy Emelyanov
+      changes:
+        - addColumn:
+            tableName: cargo
+            columns:
+              - column:
+                  name: brand_id
+                  type: int
+        - addForeignKeyConstraint:
+            baseTableName: cargo
+            baseColumnNames: brand_id
+            referencedTableName: car_brand
+            referencedColumnNames: id
+            constraintName: cargo_car_brand_fk

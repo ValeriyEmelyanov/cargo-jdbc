@@ -40,6 +40,7 @@ class CargoServiceImpl(
         CargoDto(
             id = id,
             title = title,
+            brand = brand,
             passengerCount = passengerCount,
             loadCapacity = loadCapacity,
         )
@@ -48,6 +49,7 @@ class CargoServiceImpl(
         Cargo(
             id = id,
             title = title,
+            brand = brand,
             passengerCount = passengerCount,
             loadCapacity = loadCapacity,
         )

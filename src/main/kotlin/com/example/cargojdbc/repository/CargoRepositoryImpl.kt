@@ -12,10 +12,21 @@ import java.sql.Types
 @Repository
 class CargoRepositoryImpl(
     private val jdbcTemplate: NamedParameterJdbcTemplate,
+    private val carBrandRepository: CarBrandRepository,
 ) : CargoRepository {
     override fun getAll(pageIndex: Int): List<Cargo> =
         jdbcTemplate.query(
-            "select * from cargo order by id limit :limit offset :offset",
+            """with c as (
+                select * 
+                from cargo
+                order by id
+                limit :limit offset :offset)
+                select 
+                c.*, 
+                cb.title as brand 
+                from c
+                join car_brand cb on c.brand_id = cb.id
+                order by id""",
             mapOf(
                 "limit" to PAGE_SIZE,
                 "offset" to pageIndex * PAGE_SIZE,
@@ -25,7 +36,16 @@ class CargoRepositoryImpl(
 
     override fun findById(id: Int): Cargo? =
         jdbcTemplate.query(
-            "select * from cargo where id = :id",
+            """with c as (
+                select * 
+                from cargo
+                where id = :id)
+                select 
+                c.*,
+                cb.title as brand 
+                from c
+                join car_brand cb on c.brand_id = cb.id
+                """,
             mapOf("id" to id),
             ROW_MAPPER
         ).firstOrNull()
@@ -33,11 +53,15 @@ class CargoRepositoryImpl(
     override fun create(cargo: Cargo): Cargo {
         val keyHolder = GeneratedKeyHolder()
         jdbcTemplate.update(
-            "insert into cargo (title, passenger_count, load_capacity) " +
-                    "values (:title, :passenger_count, :load_capacity)",
+            """insert into cargo (title, brand_id, passenger_count, load_capacity)
+                values (
+                :title,
+                (select id from car_brand where title = :brand order by id limit 1),
+                :passenger_count, 
+                :load_capacity)""",
             cargo.toCreateMapSqlParameterSource(),
             keyHolder,
-            listOf("id", "title", "passenger_count", "load_capacity").toTypedArray()
+            listOf("id", "title", "brand_id", "passenger_count", "load_capacity").toTypedArray()
         )
         return keyHolder.toCargo()
     }
@@ -47,8 +71,12 @@ class CargoRepositoryImpl(
             cargo.toCreateMapSqlParameterSource()
         }.toTypedArray()
         val done = jdbcTemplate.batchUpdate(
-            "insert into cargo (title, passenger_count, load_capacity) " +
-                    "values (:title, :passenger_count, :load_capacity)",
+            """insert into cargo (title, brand_id, passenger_count, load_capacity)
+                values (
+                :title,
+                (select id from car_brand where title = :brand order by id limit 1),
+                :passenger_count, 
+                :load_capacity)""",
             batchValues
         )
         return done
@@ -57,11 +85,15 @@ class CargoRepositoryImpl(
     override fun update(id: Int, cargo: Cargo): Cargo {
         val keyHolder = GeneratedKeyHolder()
         jdbcTemplate.update(
-            "update cargo set title = :title, passenger_count = :passenger_count, load_capacity = :load_capacity " +
-                    "where id = :id",
+            """update cargo set 
+                title = :title, 
+                passenger_count = :passenger_count,
+                brand_id = (select id from car_brand where title = :brand order by id limit 1),
+                load_capacity = :load_capacity
+                where id = :id""",
             cargo.toUpdateMapSqlParameterSource(id),
             keyHolder,
-            listOf("id", "title", "passenger_count", "load_capacity").toTypedArray()
+            listOf("id", "title", "brand_id", "passenger_count", "load_capacity").toTypedArray()
         )
         return keyHolder.toCargo()
     }
@@ -81,6 +113,7 @@ class CargoRepositoryImpl(
             Cargo(
                 id = rs.getInt("id"),
                 title = rs.getString("title"),
+                brand = rs.getString("brand"),
                 passengerCount = rs.getIntOrNull("passenger_count"),
                 loadCapacity = rs.getIntOrNull("load_capacity"),
             )
@@ -91,6 +124,7 @@ class CargoRepositoryImpl(
         Cargo(
             id = keys?.getValue("id") as Int,
             title = keys?.getValue("title") as String,
+            brand = (carBrandRepository.findById(keys?.getValue("brand_id") as Int))?.title,
             passengerCount = keys?.getValue("passenger_count") as Int?,
             loadCapacity = keys?.getValue("load_capacity") as Int?,
         )
@@ -98,6 +132,7 @@ class CargoRepositoryImpl(
     private fun Cargo.toCreateMapSqlParameterSource() =
         MapSqlParameterSource()
             .addValue("title", title, Types.VARCHAR)
+            .addValue("brand", brand, Types.VARCHAR)
             .addValue("passenger_count", passengerCount, Types.INTEGER)
             .addValue("load_capacity", loadCapacity, Types.INTEGER)
 

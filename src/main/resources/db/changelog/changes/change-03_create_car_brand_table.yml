@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: "003"
+      author: Emelyanov Valeriy
+      changes:
+        - createTable:
+            tableName: car_brand
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(50)
+                  constraints:
+                    nullable: false

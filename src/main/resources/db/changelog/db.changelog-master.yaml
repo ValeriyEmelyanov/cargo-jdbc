@@ -3,3 +3,7 @@ databaseChangeLog:
       file: db/changelog/changes/change-01_create_cargo_table.yml
   - include:
       file: db/changelog/changes/change-02_alter_cargo_table.yml
+  - include:
+      file: db/changelog/changes/change-03_create_car_brand_table.yml
+  - include:
+      file: db/changelog/changes/change-04_alter_cargo_table.yml
